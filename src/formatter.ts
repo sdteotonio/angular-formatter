@@ -20,7 +20,8 @@ function formatElementName(name: string) {
 export function format(src: string, config: AngularFormatterConfig): string {
   const rawHtmlParser = new HtmlParser();
   const htmlParser = new I18NHtmlParser(rawHtmlParser);
-  const htmlResult = htmlParser.parse(src, "");
+
+  const htmlResult = htmlParser.parse(src, "", true);
 
   let result: string[] = [];
   let indent = 0;
@@ -92,7 +93,11 @@ export function format(src: string, config: AngularFormatterConfig): string {
 
       indent--;
 
-      if (!ctx.textNodeInlined && !ctx.skipFormattingChildren) {
+      if (
+        !ctx.textNodeInlined &&
+        !ctx.skipFormattingChildren &&
+        element.children.length
+      ) {
         result.push("\n" + getIndent(indent));
       }
 
@@ -110,7 +115,7 @@ export function format(src: string, config: AngularFormatterConfig): string {
       result.push(prefix + attribute.name);
       if (attribute.value.length) {
         const value = getFromSource(attribute.valueSpan);
-        result.push(`="${value.trim()}"`);
+        result.push(`=${value.trim()}`);
       }
     },
     visitComment: function (comment: Comment, context: any) {
@@ -126,13 +131,14 @@ export function format(src: string, config: AngularFormatterConfig): string {
     },
     visitText: function (text: Text, context: any) {
       const value = getFromSource(text.sourceSpan);
+
       if (context.skipFormattingChildren) {
         result.push(value);
         return;
       }
       let shouldInline =
         context.inlineTextNode &&
-        value.trim().length < 40 &&
+        value.trim().length < 20 &&
         value.trim().length + result[result.length - 1].length < 140;
 
       context.textNodeInlined = shouldInline;

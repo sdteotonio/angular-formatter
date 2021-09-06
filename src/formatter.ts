@@ -80,7 +80,7 @@ export function format(src: string, config: AngularFormatterConfig): string {
       let ctx = {
         inlineTextNode: false,
         textNodeInlined: false,
-        skipFormattingChildren: SKIP_FORM_CHILDREN.includes(element.name),
+        skipFormattingChildren: SKIP_FORM_CHILDREN.indexOf(element.name) != -1,
       };
 
       if (!attrNewLines && element.children.length == 1) {
@@ -101,7 +101,7 @@ export function format(src: string, config: AngularFormatterConfig): string {
         result.push("\n" + getIndent(indent));
       }
 
-      if (!SELF_CLOSING.includes(element.name)) {
+      if (!(SELF_CLOSING.indexOf(element.name) != -1)) {
         result.push(`</${formatElementName(element.name)}>`);
       }
     },

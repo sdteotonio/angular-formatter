@@ -23,7 +23,7 @@ export class AngularFormatter implements DocumentFormattingEditProvider {
         .get("closeTagSameLine", true),
       attrOrder: workspace
         .getConfiguration("angular-formatter")
-        .get("attributeOrder", ["*", "[", "("]),
+        .get("attributeOrder", ["#", "*", "[", "("]),
     };
 
     try {
@@ -38,7 +38,7 @@ export class AngularFormatter implements DocumentFormattingEditProvider {
         ),
       ];
     } catch (e) {
-      window.showErrorMessage(e.message);
+      window.showErrorMessage(String(e));
     }
   }
 }
